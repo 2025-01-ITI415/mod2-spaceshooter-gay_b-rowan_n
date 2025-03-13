@@ -140,6 +140,8 @@ public class Weapon : MonoBehaviour
                 p.vel = p.transform.rotation * vel;
                 break;
 
+            
+
         }
     }
 

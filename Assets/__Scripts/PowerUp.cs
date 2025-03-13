@@ -36,7 +36,7 @@ public class PowerUp : MonoBehaviour
         cubeMat = cube.GetComponent<Renderer>().material;
 
         // Set a random velocity
-        Vector3 vel = Random.onUnitSphere; // Get Random XYZ velocity          // c
+        Vector3 vel = Random.onUnitSphere; // Get Random XYZ velocity         // c
         vel.z = 0;         // Flatten the vel to the XY plane
         vel.Normalize();   // Normalizing a Vector3 sets its length to 1m
 
@@ -64,7 +64,7 @@ public class PowerUp : MonoBehaviour
         // Fade out the PowerUp over time
         // Given the default values, a PowerUp will exist for 10 seconds
         //   and then fade out over 4 seconds.
-        float u = (Time.time - (birthTime + lifeTime)) / fadeTime;              // g
+        float u = (Time.time - (birthTime + lifeTime)) / fadeTime;            // g
         // If u >= 1, destroy this PowerUp
         if (u >= 1)
         {

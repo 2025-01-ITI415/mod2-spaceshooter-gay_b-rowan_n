@@ -591,7 +591,7 @@ MonoBehaviour:
   speed: 30
   rollMult: -45
   pitchMult: 30
-  projectilePrefab: {fileID: 8884485313326729009, guid: 93cdb1254cc5842aeb5402d7b9f73a99, type: 3}
+  projectilePrefab: {fileID: 8884485313326729009, guid: bf817fde007057641a4f607f5cbf9d4f, type: 3}
   projectileSpeed: 40
   weapons:
   - {fileID: 1832105430}

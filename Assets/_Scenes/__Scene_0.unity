@@ -777,7 +777,7 @@ MonoBehaviour:
     delayBetweenShots: 0
     velocity: 50
   - type: 3
-    letter: M
+    letter: P
     powerUpColor: {r: 0.03774297, g: 0.10117094, b: 0.80015105, a: 1}
     weaponModelPrefab: {fileID: 919132149155446097, guid: 2b917555367b8f64fab39ba6974870f3, type: 3}
     projectilePrefab: {fileID: 8884485313326729009, guid: bf817fde007057641a4f607f5cbf9d4f, type: 3}

@@ -5,56 +5,90 @@ using UnityEngine;
 [RequireComponent(typeof(BoundsCheck))]
 public class Enemy : MonoBehaviour
 {
-
-
-    [Header("Inscribed")]
-    public float speed = 20f;   // The movement speed is 10m/s
-    public float fireRate = 0.3f;  // Seconds/shot (Unused)
-    public float health = 10;    // Damage needed to destroy this enemy
-    public int score = 100;   // Points earned for destroying this
+    [Header("General Settings")]
+    public float speed = 20f;   // Movement speed in meters per second
+    public float health = 10;   // Damage needed to destroy this enemy
+    public int score = 100;     // Points earned for destroying this enemy
     public float powerUpDropChance = 1f;
 
+    [Header("Shooting")]
+    public bool canShoot = false;
+    public GameObject enemyProjectilePrefab;
+    public float fireRate = 1.5f; // Seconds between shots
+    private float nextShotTime;
 
-    // private BoundsCheck bndCheck;                                             // b
     protected BoundsCheck bndCheck;
     protected bool calledShipDestroyed = false;
 
-    void Awake()
-    {                                                            // c
-        bndCheck = GetComponent<BoundsCheck>();
-    }
-
-    // This is a Property: A method that acts like a field
+    // Property to get and set enemy position
     public Vector3 pos
-    {                                                       // a
-        get
-        {
-            return this.transform.position;
-        }
-        set
-        {
-            this.transform.position = value;
-        }
+    {
+        get => transform.position;
+        set => transform.position = value;
     }
 
-    void Update()
+    protected virtual void Awake()
+    {
+        bndCheck = GetComponent<BoundsCheck>();
+
+        // Initialize shooting timer with some randomness
+        nextShotTime = Time.time + Random.Range(0.5f, fireRate);
+    }
+
+    protected virtual void Update()
     {
         Move();
 
-        // Check whether this Enemy has gone off the bottom of the screen
+        // Check if the enemy can shoot and if it's time to fire
+        if (canShoot && Time.time > nextShotTime && bndCheck.isOnScreen)
+        {
+            FireProjectile();
+            nextShotTime = Time.time + fireRate;
+        }
+
+        // Destroy the enemy if it moves off the bottom of the screen
         if (bndCheck.LocIs(BoundsCheck.eScreenLocs.offDown))
         {
             Destroy(gameObject);
-
-
         }
     }
 
     public virtual void Move()
-    { // c
+    {
+        // Default movement: move downward
         Vector3 tempPos = pos;
         tempPos.y -= speed * Time.deltaTime;
         pos = tempPos;
+    }
+
+    protected virtual void FireProjectile()
+    {
+        if (enemyProjectilePrefab == null) return;
+
+        // Ensure projectile anchor exists
+        if (Weapon.PROJECTILE_ANCHOR == null)
+        {
+            GameObject go = new GameObject("_ProjectileAnchor");
+            Weapon.PROJECTILE_ANCHOR = go.transform;
+        }
+
+        // Get weapon definition
+        WeaponDefinition def = Main.GET_WEAPON_DEFINITION(eWeaponType.blaster);
+
+        // Instantiate the projectile
+        GameObject projGO = Instantiate(enemyProjectilePrefab, Weapon.PROJECTILE_ANCHOR);
+
+        // Position it slightly below the enemy to avoid self-collision
+        Vector3 position = transform.position;
+        position.y -= 0.5f;
+        projGO.transform.position = position;
+
+        // Configure projectile
+        ProjectileEnemy proj = projGO.GetComponent<ProjectileEnemy>();
+        proj.type = eWeaponType.blaster;
+
+        // Set velocity from weapon definition
+        proj.vel = Vector3.down * def.velocity;
     }
 
     void OnCollisionEnter(Collision coll)
@@ -64,30 +98,25 @@ public class Enemy : MonoBehaviour
         // Check for collisions with ProjectileHero
         ProjectileHero p = otherGO.GetComponent<ProjectileHero>();
         if (p != null)
-        {                                                  
+        {
             // Only damage this Enemy if it’s on screen
             if (bndCheck.isOnScreen)
-            {                                      
-                // Get the damage amount from the Main WEAP_DICT.
+            {
+                // Get the damage amount from the weapon dictionary
                 health -= Main.GET_WEAPON_DEFINITION(p.type).damageOnHit;
-                if (health <= 0)
+                if (health <= 0 && !calledShipDestroyed)
                 {
-                    if (!calledShipDestroyed)
-                    {
-                        calledShipDestroyed = true;
-                        Main.SHIP_DESTROYED(this);
-                    }
-                    // Destroy this Enemy
-                    Destroy(this.gameObject);
+                    calledShipDestroyed = true;
+                    Main.SHIP_DESTROYED(this);
+                    Destroy(gameObject);
                 }
             }
-            // Destroy the ProjectileHero regardless
-            Destroy(otherGO);                                               // e
+            // Destroy the projectile regardless
+            Destroy(otherGO);
         }
         else
         {
-            print("Enemy hit by non-ProjectileHero: " + otherGO.name);      // f
+            Debug.Log("Enemy hit by non-ProjectileHero: " + otherGO.name);
         }
     }
-
 }

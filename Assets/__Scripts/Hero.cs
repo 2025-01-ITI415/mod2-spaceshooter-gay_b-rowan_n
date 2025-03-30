@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Hero : MonoBehaviour
 {
-
     static public Hero S { get; private set; }  // Singleton property    // a
 
     [Header("Inscribed")]
@@ -25,10 +24,12 @@ public class Hero : MonoBehaviour
     private GameObject lastTriggerGo = null;
 
     // Declare a new delegate type WeaponFireDelegate
-    public delegate void WeaponFireDelegate();                                // a     // Create a WeaponFireDelegate event named fireEvent.
+    public delegate void WeaponFireDelegate();                                // a
     public event WeaponFireDelegate fireEvent;
 
-
+    [Header("Sound")]
+    public AudioClip fireSound;     // Reference to the fire sound clip
+    private AudioSource audioSource;  // AudioSource component to play the sound
 
     void Awake()
     {
@@ -40,7 +41,9 @@ public class Hero : MonoBehaviour
         {
             Debug.LogError("Hero.Awake() - Attempted to assign second Hero.S!");
         }
-        //fireEvent += TempFire;
+
+        // Initialize the AudioSource component to play sounds
+        audioSource = GetComponent<AudioSource>();
 
         // Reset the weapons to start _Hero with 1 blaster
         ClearWeapons();
@@ -62,34 +65,22 @@ public class Hero : MonoBehaviour
         // Rotate the ship to make it feel more dynamic                       // e
         transform.rotation = Quaternion.Euler(vAxis * pitchMult, hAxis * rollMult, 0);
 
-        // Allow the ship to fire
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    TempFire();
-        //}
-
         // Use the fireEvent to fire Weapons when the Spacebar is pressed.
         if (Input.GetAxis("Jump") == 1 && fireEvent != null)
         {
             fireEvent();
+            PlayFireSound(); // Play sound when firing
         }
-
     }
 
-
-    //void TempFire()
-    //{
-    //    GameObject projGO = Instantiate<GameObject>(projectilePrefab);
-    //    projGO.transform.position = transform.position;
-    //    Rigidbody rigidB = projGO.GetComponent<Rigidbody>();
-    //    //rigidB.velocity = Vector3.up * projectileSpeed;
-
-    //    ProjectileHero proj = projGO.GetComponent<ProjectileHero>();         // h
-    //    proj.type = eWeaponType.blaster;
-    //    float tSpeed = Main.GET_WEAPON_DEFINITION(proj.type).velocity;
-    //    rigidB.velocity = Vector3.up * tSpeed;
-
-    //}
+    // Method to play the fire sound
+    private void PlayFireSound()
+    {
+        if (fireSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(fireSound);  // Play the fire sound once
+        }
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -137,7 +128,7 @@ public class Hero : MonoBehaviour
     /// <summary>
     /// Finds the first empty Weapon slot (i.e., type=none) and returns it.
     /// </summary>
-    /// <returnsThe first empty Weapon slot or null if none are empty</returns
+    /// <returnsThe first empty Weapon slot or null if none are empty</returns>
     Weapon GetEmptyWeaponSlot()
     {
         for (int i = 0; i < weapons.Length; i++)
@@ -186,9 +177,7 @@ public class Hero : MonoBehaviour
                     weapons[0].SetType(pUp.type);
                 }
                 break;
-
         }
         pUp.AbsorbedBy(this.gameObject);
     }
-
 }

@@ -11,6 +11,7 @@ public class BlinkColorOnHit : MonoBehaviour
     [Header("Dynamic")]
     public bool showingColor = false;
     public float blinkCompleteTime; // Time to stop showing the color
+    public bool  ignoreOnCollisionEnter = false;      
 
     private Material[] materials;   // All the Materials of this & its children
     private Color[] originalColors;
@@ -19,7 +20,7 @@ public class BlinkColorOnHit : MonoBehaviour
     void Awake()
     {
         bndCheck = GetComponentInParent<BoundsCheck>();                       // c
-                                                                              // Get materials and colors for this GameObject and its children
+// Get materials and colors for this GameObject and its children
         materials = Utils.GetAllMaterials(gameObject);                      // d
         originalColors = new Color[materials.Length];
         for (int i = 0; i < materials.Length; i++)
@@ -28,7 +29,6 @@ public class BlinkColorOnHit : MonoBehaviour
         }
     }
 
-    // void Start() {…}  // Please delete the unused Start() method
 
     void Update()
     {
@@ -37,6 +37,7 @@ public class BlinkColorOnHit : MonoBehaviour
 
     void OnCollisionEnter(Collision coll)
     {
+        if ( ignoreOnCollisionEnter ) return;
         // Check for collisions with ProjectileHero
         ProjectileHero p = coll.gameObject.GetComponent<ProjectileHero>();
         if (p != null)
@@ -47,14 +48,16 @@ public class BlinkColorOnHit : MonoBehaviour
             }
             SetColors();
         }
+        
     }
-
+    
+    
     /// <summary
     /// Sets the Albedo color (i.e., the main color) of all materials in the
     ///  materials array to blinkColor, sets showingColor to true, and sets the
     ///  time that the colors should be reverted.
     /// </summary
-    void SetColors()
+    public void SetColors()
     {
         foreach (Material m in materials)
         {
@@ -76,4 +79,5 @@ public class BlinkColorOnHit : MonoBehaviour
         }
         showingColor = false;
     }
+    
 }

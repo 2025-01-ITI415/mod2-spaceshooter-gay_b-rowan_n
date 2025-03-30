@@ -12,7 +12,7 @@ public class EnemyShield : MonoBehaviour {
 
     private     List<EnemyShield> protectors = new List<EnemyShield>();
 
-    private BlinkColorOnHit   blinker;
+    private BlinkColorOnHit  blinker;
 
 
     void Start() {         
@@ -23,8 +23,10 @@ public class EnemyShield : MonoBehaviour {
         
     EnemyShield shieldParent = transform.parent.GetComponent<EnemyShield>();
      
-    if ( shieldParent != null ) { shieldParent.AddProtector( this );
-        }   
+        if ( shieldParent != null ) 
+        { 
+            shieldParent.AddProtector( this );
+        } 
     }
 
      
@@ -38,8 +40,10 @@ public class EnemyShield : MonoBehaviour {
             private set { gameObject.SetActive(value); }
     }
 
+        public float TakeDamage( float dmg){
         foreach ( EnemyShield es in protectors ) {
-            if (es.isActive){
+            if (es.isActive)
+            {
                 dmg = es.TakeDamage( dmg );
                 if ( dmg == 0) return 0;
             }
@@ -55,4 +59,5 @@ public class EnemyShield : MonoBehaviour {
     // Update is called once per frame 
         return 0;
     }
+    
 }

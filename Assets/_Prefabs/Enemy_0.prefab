@@ -119,12 +119,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 20
-  fireRate: 0.3
   health: 10
   score: 100
   powerUpDropChance: 1
+  canShoot: 0
   enemyProjectilePrefab: {fileID: 8884485313326729009, guid: f8e2eaabb8cc44f019cb518d953a6d14, type: 3}
   fireRate: 0.3
+  enemy0ProjectilePrefab: {fileID: 8884485313326729009, guid: f8e2eaabb8cc44f019cb518d953a6d14, type: 3}
+  enemy0FireRate: 1.5
 --- !u!114 &4413574950116602420
 MonoBehaviour:
   m_ObjectHideFlags: 0

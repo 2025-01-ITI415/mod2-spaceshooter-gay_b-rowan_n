@@ -10,7 +10,7 @@ public class EnemyShield : MonoBehaviour {
 
 
 
-    private     List<EnemyShield> protectors = new List<EnemyShield>();
+    private List<EnemyShield> protectors = new List<EnemyShield>();
 
     private BlinkColorOnHit  blinker;
 
@@ -30,31 +30,30 @@ public class EnemyShield : MonoBehaviour {
     }
 
      
-    public void AddProtector( EnemyShield shieldChild ) 
-    { 
+        public void AddProtector( EnemyShield shieldChild ) { 
         protectors.Add( shieldChild );
-    }
+        }
         
         public bool isActive {
             get { return gameObject.activeInHierarchy; }
             private set { gameObject.SetActive(value); }
-    }
+        }
 
         public float TakeDamage( float dmg){
-        foreach ( EnemyShield es in protectors ) {
-            if (es.isActive)
-            {
+            foreach ( EnemyShield es in protectors ) {
+                if (es.isActive)
+                {
                 dmg = es.TakeDamage( dmg );
                 if ( dmg == 0) return 0;
+                }
             }
-        }
-        blinker.SetColors();
+            blinker.SetColors();
 
-        health -= dmg;
-        if (health <= 0) {
-            isActive = false;
-            return -health;
-        }
+            health -= dmg;
+            if (health <= 0) {
+                isActive = false;
+                return -health;
+            }
 
     // Update is called once per frame 
         return 0;
